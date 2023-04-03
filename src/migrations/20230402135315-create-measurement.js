@@ -20,11 +20,32 @@ module.exports = {
       is_stanting: {
         type: Sequelize.BOOLEAN,
       },
+      date: {
+        type: Sequelize.DATEONLY,
+      },
       body_weight: {
         type: Sequelize.FLOAT,
       },
       arm_circumference: {
         type: Sequelize.FLOAT,
+      },
+      created_by: {
+        type: Sequelize.BIGINT,
+        references: {
+          model: 'users',
+          key: 'id',
+          onUpdate: 'cascade',
+          onDelete: 'cascade',
+        },
+      },
+      updated_by: {
+        type: Sequelize.BIGINT,
+        references: {
+          model: 'users',
+          key: 'id',
+          onUpdate: 'cascade',
+          onDelete: 'cascade',
+        },
       },
       created_at: {
         allowNull: true,

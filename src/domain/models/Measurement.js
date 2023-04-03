@@ -26,7 +26,10 @@ module.exports = (sequelize, DataTypes) => {
     baby_id: DataTypes.STRING,
     is_stanting: DataTypes.BOOLEAN,
     body_weight: DataTypes.FLOAT,
+    date: DataTypes.DATEONLY,
     arm_circumference: DataTypes.FLOAT,
+    created_by: DataTypes.BIGINT,
+    updated_by: DataTypes.BIGINT,
     created_at: {
       type: DataTypes.DATE,
       name: 'createdAt',

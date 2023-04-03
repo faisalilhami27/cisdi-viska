@@ -23,6 +23,7 @@ class MeasurementUseCase extends BaseUseCase {
         body_weight,
         arm_circumference,
       } = this.req.body;
+      const userId = this.req.user.data.id;
       const checkBaby = await this.babyRepository.getOne({
         id: baby_id,
       });
@@ -34,6 +35,7 @@ class MeasurementUseCase extends BaseUseCase {
         is_stanting,
         body_weight,
         arm_circumference,
+        created_by: userId,
       });
       return this.returnCreated(result);
     } catch (err) {
@@ -54,6 +56,7 @@ class MeasurementUseCase extends BaseUseCase {
         arm_circumference,
       } = this.req.body;
       const { id } = this.req.params;
+      const userId = this.req.user.data.id;
       const checkBaby = await this.babyRepository.getOne({
         id: baby_id,
       });
@@ -75,12 +78,14 @@ class MeasurementUseCase extends BaseUseCase {
         is_stanting,
         body_weight,
         arm_circumference,
+        updated_by: userId,
       });
       return this.returnOk({
         baby_id,
         is_stanting,
         body_weight,
         arm_circumference,
+        updated_by: userId,
       });
     } catch (err) {
       return this.returnErrOnCatch(err);
