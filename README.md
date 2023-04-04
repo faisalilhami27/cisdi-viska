@@ -45,3 +45,6 @@ app
 
 1. username: admin
 2. password: admin123
+
+# Postman
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/8051022-161c23d3-b20b-4409-97f9-288cfa17bc4e?action=collection%2Ffork&collection-url=entityId%3D8051022-161c23d3-b20b-4409-97f9-288cfa17bc4e%26entityType%3Dcollection%26workspaceId%3D943557ba-d536-46d9-8cec-16ee0092fd1b)
