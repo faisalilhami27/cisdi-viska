@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const moment = require('moment');
 
 /** @type {import('sequelize-cli').Migration} */

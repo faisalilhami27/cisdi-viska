@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const UserRepository = require('../../repositories/user/UserRepository');
 const BaseUseCase = require('../BaseUseCase');
@@ -29,8 +29,8 @@ class UserUseCase extends BaseUseCase {
       }
 
       const {
-        name, username, password, role,
-      } = this.req.body;
+ name, username, password, role,
+} = this.req.body;
       const passwordHash = await bcrypt.hash(password, 10);
       const checkUsername = await this.userRepository.getOne({
         username,
@@ -67,8 +67,8 @@ class UserUseCase extends BaseUseCase {
       }
 
       const {
-        name, username, password, role,
-      } = this.req.body;
+ name, username, password, role,
+} = this.req.body;
       const { id } = this.req.params;
       const passwordHash = await bcrypt.hash(password, 10);
       const result = await this.userRepository.getOne({

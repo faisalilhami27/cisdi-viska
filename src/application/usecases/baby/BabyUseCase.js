@@ -34,8 +34,8 @@ class BabyUseCase extends BaseUseCase {
       }
 
       const {
-        parent_id, name, birth_date, height, weight, arm_circumference,
-      } = this.req.body;
+ parent_id, name, birth_date, height, weight, arm_circumference,
+} = this.req.body;
       const photo = this.req.file
         ? `${awsConfig.aws.S3_URL}/${this.req.file.originalname}`
         : null;
@@ -84,8 +84,8 @@ class BabyUseCase extends BaseUseCase {
       }
 
       const {
-        parent_id, name, birth_date, height, weight, arm_circumference,
-      } = this.req.body;
+ parent_id, name, birth_date, height, weight, arm_circumference,
+} = this.req.body;
       const { id } = this.req.params;
       const checkParent = await this.parentRepository.getOne({
         id: parent_id,

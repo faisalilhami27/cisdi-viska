@@ -41,6 +41,10 @@ app
 5. npx sequelize db:seed:all
 6. npm run dev
 
+# Run with docker
+
+1. docker-compose up -d --build --force-recreate --renew-anon-volumes
+
 # Account Default
 
 1. username: admin
