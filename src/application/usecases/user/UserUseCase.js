@@ -2,6 +2,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const UserRepository = require('../../repositories/user/UserRepository');
 const BaseUseCase = require('../BaseUseCase');
+const UserRequest = require('../../../interface/requests/user/UserRequest');
+const LoginRequest = require('../../../interface/requests/auth/LoginRequest');
 const Message = require('../../../constant/message');
 const config = require('../../../constant/common');
 
@@ -9,6 +11,8 @@ class UserUseCase extends BaseUseCase {
   constructor(req) {
     super();
     this.userRepository = new UserRepository();
+    this.userRequest = new UserRequest();
+    this.loginRequest = new LoginRequest();
     this.req = req;
   }
 
@@ -18,18 +22,25 @@ class UserUseCase extends BaseUseCase {
    */
   async create() {
     try {
+      const validate = await this.userRequest.rules(this.req.body);
+
+      if (validate.fails()) {
+        return this.returnErrValidation(validate.errors.errors);
+      }
+
       const {
-        name,
-        username,
-        password,
-        role,
+        name, username, password, role,
       } = this.req.body;
       const passwordHash = await bcrypt.hash(password, 10);
       const checkUsername = await this.userRepository.getOne({
         username,
       });
 
-      if (checkUsername != null) return this.returnErrWithCustomMessage(`Username ${Message.Common.exist}`);
+      if (checkUsername != null) {
+        return this.returnErrWithCustomMessage(
+          `Username ${Message.Common.exist}`,
+        );
+      }
 
       const result = await this.userRepository.create({
         name,
@@ -49,11 +60,14 @@ class UserUseCase extends BaseUseCase {
    */
   async update() {
     try {
+      const validate = await this.userRequest.rules(this.req.body);
+
+      if (validate.fails()) {
+        return this.returnErrValidation(validate.errors.errors);
+      }
+
       const {
-        name,
-        username,
-        password,
-        role,
+        name, username, password, role,
       } = this.req.body;
       const { id } = this.req.params;
       const passwordHash = await bcrypt.hash(password, 10);
@@ -65,14 +79,17 @@ class UserUseCase extends BaseUseCase {
         return this.returnNotFound();
       }
 
-      await this.userRepository.update({
-        id,
-      }, {
-        name,
-        username,
-        password: passwordHash,
-        role,
-      });
+      await this.userRepository.update(
+        {
+          id,
+        },
+        {
+          name,
+          username,
+          password: passwordHash,
+          role,
+        },
+      );
       return this.returnOk({
         name,
         username,
@@ -143,6 +160,12 @@ class UserUseCase extends BaseUseCase {
 
   async login() {
     try {
+      const validate = await this.loginRequest.rules(this.req.body);
+
+      if (validate.fails()) {
+        return this.returnErrValidation(validate.errors.errors);
+      }
+
       const { username, password } = this.req.body;
       const result = await this.userRepository.getOne({
         username,
@@ -164,7 +187,7 @@ class UserUseCase extends BaseUseCase {
         password: result.password,
       };
       const token = jwt.sign({ data }, config.common.JWT_SECRET, {});
-      return this.returnOk(result, token);
+      return this.returnOk(data, token);
     } catch (err) {
       return this.returnErrOnCatch(err);
     }

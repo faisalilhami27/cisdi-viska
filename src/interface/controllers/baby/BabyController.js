@@ -32,6 +32,12 @@ class BabyController extends BaseController {
     const statusCode = new StatusCode(result);
     return res.status(statusCode.code).json(result);
   }
+
+  async isStunting(req, res) {
+    const result = await new BabyUseCase(req).isStunting();
+    const statusCode = new StatusCode(result);
+    return res.status(statusCode.code).json(result);
+  }
 }
 
 module.exports = BabyController;

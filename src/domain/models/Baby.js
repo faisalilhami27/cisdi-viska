@@ -1,6 +1,4 @@
-const {
-  Model,
-} = require('sequelize');
+const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   class Baby extends Model {
@@ -21,41 +19,50 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
   }
-  Baby.init({
-    id: {
-      type: DataTypes.BIGINT,
-      primaryKey: true,
-      autoIncrement: true,
-      allowNull: false,
+  Baby.init(
+    {
+      id: {
+        type: DataTypes.BIGINT,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false,
+      },
+      parent_id: DataTypes.BIGINT,
+      name: DataTypes.STRING(100),
+      birth_date: DataTypes.DATEONLY,
+      photo: DataTypes.STRING(255),
+      weight: DataTypes.FLOAT,
+      height: DataTypes.INTEGER,
+      arm_circumference: DataTypes.FLOAT,
+      is_stunting: DataTypes.BOOLEAN,
+      created_by: DataTypes.BIGINT,
+      updated_by: DataTypes.BIGINT,
+      created_at: {
+        type: DataTypes.DATE,
+        name: 'createdAt',
+        field: 'created_at',
+      },
+      updated_at: {
+        type: DataTypes.DATE,
+        name: 'updatedAt',
+        field: 'updated_at',
+      },
+      deleted_at: {
+        type: DataTypes.DATE,
+        name: 'deletedAt',
+        field: 'deleted_at',
+      },
     },
-    parent_id: DataTypes.BIGINT,
-    name: DataTypes.STRING(100),
-    birth_date: DataTypes.DATEONLY,
-    photo: DataTypes.STRING(255),
-    created_at: {
-      type: DataTypes.DATE,
-      name: 'createdAt',
-      field: 'created_at',
+    {
+      sequelize,
+      modelName: 'Baby',
+      tableName: 'babies',
+      timestamps: true,
+      paranoid: true,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
+      deletedAt: 'deleted_at',
     },
-    updated_at: {
-      type: DataTypes.DATE,
-      name: 'updatedAt',
-      field: 'updated_at',
-    },
-    deleted_at: {
-      type: DataTypes.DATE,
-      name: 'deletedAt',
-      field: 'deleted_at',
-    },
-  }, {
-    sequelize,
-    modelName: 'Baby',
-    tableName: 'babies',
-    timestamps: true,
-    paranoid: true,
-    createdAt: 'created_at',
-    updatedAt: 'updated_at',
-    deletedAt: 'deleted_at',
-  });
+  );
   return Baby;
 };

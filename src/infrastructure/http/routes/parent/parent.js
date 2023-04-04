@@ -3,15 +3,40 @@ const express = require('express');
 const router = express.Router();
 
 const ParentController = require('../../../../interface/controllers/parent/ParentController');
-const VerifyToken = require('../../../../interface/middlewares/VerifyToken');
+const VerifyToken = require('../../../../interface/middlewares/Middleware');
 
 const middleware = new VerifyToken();
 const parentController = new ParentController();
 
-router.get('/', middleware.verify, parentController.getAll);
-router.get('/:id', middleware.verify, parentController.getOne);
-router.post('/', middleware.verify, parentController.create);
-router.put('/:id', middleware.verify, parentController.update);
-router.delete('/:id', middleware.verify, parentController.delete);
+router.get(
+  '/',
+  middleware.verifyToken,
+  middleware.checkRole(['admin', 'kader', 'nakes']),
+  parentController.getAll,
+);
+router.get(
+  '/:id',
+  middleware.verifyToken,
+  middleware.checkRole(['admin', 'kader', 'nakes']),
+  parentController.getOne,
+);
+router.post(
+  '/',
+  middleware.verifyToken,
+  middleware.checkRole(['admin', 'kader']),
+  parentController.create,
+);
+router.put(
+  '/:id',
+  middleware.verifyToken,
+  middleware.checkRole(['admin', 'kader']),
+  parentController.update,
+);
+router.delete(
+  '/:id',
+  middleware.verifyToken,
+  middleware.checkRole(['admin']),
+  parentController.delete,
+);
 
 module.exports = router;

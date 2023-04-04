@@ -16,6 +16,10 @@ class BaseUseCase {
     return new Response(false, Message.Common.notFound, null, null);
   }
 
+  returnErrValidation(error) {
+    return new Response(false, Message.Common.validationErr, null, error);
+  }
+
   returnNotFoundWithCustomMessage(message) {
     return new Response(false, message, null, null);
   }

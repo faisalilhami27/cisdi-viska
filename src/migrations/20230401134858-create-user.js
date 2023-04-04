@@ -19,8 +19,8 @@ module.exports = {
       },
       role: {
         type: Sequelize.ENUM,
-        values: ['kader', 'nakes'],
-        defaultValue: 'kader',
+        values: ['kader', 'nakes', 'admin'],
+        defaultValue: 'admin',
       },
       created_at: {
         allowNull: true,

@@ -33,8 +33,15 @@ app
 ```
 
 # How to run
+
 1. npm install
 2. copy .env.example to .env
 3. fill .env file
 4. npx sequelize db:migrate
-5. npm run dev
+5. npx sequelize db:seed:all
+6. npm run dev
+
+# Account Default
+
+1. username: admin
+2. password: admin123

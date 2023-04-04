@@ -1,12 +1,15 @@
 const ParentRepository = require('../../repositories/parent/ParentRepository');
 const BaseUseCase = require('../BaseUseCase');
+const ParentRequest = require('../../../interface/requests/parent/ParentRequest');
 const Message = require('../../../constant/message');
 
 class ParentUseCase extends BaseUseCase {
   constructor(req) {
     super();
     this.parentRepository = new ParentRepository();
+    this.parentRequest = new ParentRequest();
     this.req = req;
+    this.user = this.req.user.data;
   }
 
   /**
@@ -15,11 +18,13 @@ class ParentUseCase extends BaseUseCase {
    */
   async create() {
     try {
-      const {
-        nik,
-        name,
-        address,
-      } = this.req.body;
+      const validate = await this.parentRequest.rules(this.req.body);
+
+      if (validate.fails()) {
+        return this.returnErrValidation(validate.errors.errors);
+      }
+
+      const { nik, name, address } = this.req.body;
       const checkNIK = await this.parentRepository.getOne({
         nik,
       });
@@ -30,6 +35,7 @@ class ParentUseCase extends BaseUseCase {
         nik,
         name,
         address,
+        created_by: this.user.id,
       });
       return this.returnCreated(result);
     } catch (err) {
@@ -43,11 +49,13 @@ class ParentUseCase extends BaseUseCase {
    */
   async update() {
     try {
-      const {
-        nik,
-        name,
-        address,
-      } = this.req.body;
+      const validate = await this.parentRequest.rules(this.req.body);
+
+      if (validate.fails()) {
+        return this.returnErrValidation(validate.errors.errors);
+      }
+
+      const { nik, name, address } = this.req.body;
       const { id } = this.req.params;
       const result = await this.parentRepository.getOne({
         id,
@@ -57,13 +65,17 @@ class ParentUseCase extends BaseUseCase {
         return this.returnNotFound();
       }
 
-      await this.parentRepository.update({
-        id,
-      }, {
-        nik,
-        name,
-        address,
-      });
+      await this.parentRepository.update(
+        {
+          id,
+        },
+        {
+          nik,
+          name,
+          address,
+          updated_by: this.user.id,
+        },
+      );
       return this.returnOk({
         nik,
         name,

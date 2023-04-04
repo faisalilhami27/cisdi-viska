@@ -1,5 +1,5 @@
 const BaseRepository = require('../BaseRepository');
-const { Measurement } = require('../../../domain/models');
+const { Measurement, Baby } = require('../../../domain/models');
 
 class MeasurementRepository extends BaseRepository {
   constructor() {
@@ -21,47 +21,22 @@ class MeasurementRepository extends BaseRepository {
   }
 
   /**
-   * Update parent
-   * @param params
-   * @param data
-   * @returns {Promise<*>}
-   */
-  async update(params, data) {
-    try {
-      console.log(data);
-      return await this.updateData({
-        where: params,
-      }, data);
-    } catch (error) {
-      this.logError(error);
-      return error;
-    }
-  }
-
-  /**
-   * Delete parent
-   * @param params
-   * @returns {Promise<*>}
-   */
-  async delete(params) {
-    try {
-      return await this.deleteData({
-        where: params,
-      });
-    } catch (error) {
-      this.logError(error);
-      return error;
-    }
-  }
-
-  /**
    * Get all parent
    * @param params
    * @returns {Promise<*>}
    */
-  async getAll(params = null) {
+  async getAll(params = {}) {
     try {
-      return await this.findAll(params);
+      return await this.findAll({
+        include: [
+          {
+            model: Baby,
+            as: 'baby',
+            attributes: ['id', 'name'],
+          },
+        ],
+        where: params,
+      });
     } catch (error) {
       this.logError(error);
       return error;
@@ -76,6 +51,13 @@ class MeasurementRepository extends BaseRepository {
   async getOne(params) {
     try {
       return await this.findOne({
+        include: [
+          {
+            model: Baby,
+            as: 'baby',
+            attributes: ['id', 'name'],
+          },
+        ],
         where: params,
       });
     } catch (error) {

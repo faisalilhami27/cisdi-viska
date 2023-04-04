@@ -1,6 +1,4 @@
-const {
-  Model,
-} = require('sequelize');
+const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   class Parent extends Model {
@@ -16,40 +14,45 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
   }
-  Parent.init({
-    id: {
-      type: DataTypes.BIGINT,
-      primaryKey: true,
-      autoIncrement: true,
-      allowNull: false,
+  Parent.init(
+    {
+      id: {
+        type: DataTypes.BIGINT,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false,
+      },
+      nik: DataTypes.STRING,
+      name: DataTypes.STRING,
+      address: DataTypes.STRING,
+      created_by: DataTypes.BIGINT,
+      updated_by: DataTypes.BIGINT,
+      created_at: {
+        type: DataTypes.DATE,
+        name: 'createdAt',
+        field: 'created_at',
+      },
+      updated_at: {
+        type: DataTypes.DATE,
+        name: 'updatedAt',
+        field: 'updated_at',
+      },
+      deleted_at: {
+        type: DataTypes.DATE,
+        name: 'deletedAt',
+        field: 'deleted_at',
+      },
     },
-    nik: DataTypes.STRING,
-    name: DataTypes.STRING,
-    address: DataTypes.STRING,
-    created_at: {
-      type: DataTypes.DATE,
-      name: 'createdAt',
-      field: 'created_at',
+    {
+      sequelize,
+      modelName: 'Parent',
+      tableName: 'parents',
+      timestamps: true,
+      paranoid: true,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
+      deletedAt: 'deleted_at',
     },
-    updated_at: {
-      type: DataTypes.DATE,
-      name: 'updatedAt',
-      field: 'updated_at',
-    },
-    deleted_at: {
-      type: DataTypes.DATE,
-      name: 'deletedAt',
-      field: 'deleted_at',
-    },
-  }, {
-    sequelize,
-    modelName: 'Parent',
-    tableName: 'parents',
-    timestamps: true,
-    paranoid: true,
-    createdAt: 'created_at',
-    updatedAt: 'updated_at',
-    deletedAt: 'deleted_at',
-  });
+  );
   return Parent;
 };

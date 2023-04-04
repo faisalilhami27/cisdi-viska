@@ -6,7 +6,10 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
+        type: Sequelize.BIGINT,
+      },
+      date: {
+        type: Sequelize.DATEONLY,
       },
       baby_id: {
         type: Sequelize.BIGINT,
@@ -17,16 +20,13 @@ module.exports = {
         onDelete: 'cascade',
         onUpdate: 'cascade',
       },
-      is_stanting: {
-        type: Sequelize.BOOLEAN,
-      },
-      date: {
-        type: Sequelize.DATEONLY,
-      },
-      body_weight: {
+      last_weight: {
         type: Sequelize.FLOAT,
       },
-      arm_circumference: {
+      last_height: {
+        type: Sequelize.INTEGER,
+      },
+      last_arm_circumference: {
         type: Sequelize.FLOAT,
       },
       created_by: {

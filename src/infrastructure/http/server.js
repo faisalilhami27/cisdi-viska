@@ -66,7 +66,8 @@ class Server {
       res.send('Welcome to the API');
     });
 
-    sequelize.authenticate()
+    sequelize
+      .authenticate()
       .then(() => {
         console.log('Connection has been established successfully.');
       })

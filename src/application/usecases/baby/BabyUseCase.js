@@ -3,6 +3,8 @@ const ParentRepository = require('../../repositories/parent/ParentRepository');
 const BaseUseCase = require('../BaseUseCase');
 const Message = require('../../../constant/message');
 const UploadFile = require('../../../infrastructure/component/aws/UploadFile');
+const BabyRequest = require('../../../interface/requests/baby/BabyRequest');
+const StuntingRequest = require('../../../interface/requests/baby/StuntingRequest');
 const awsConfig = require('../../../constant/aws');
 
 class BabyUseCase extends BaseUseCase {
@@ -12,6 +14,9 @@ class BabyUseCase extends BaseUseCase {
     this.parentRepository = new ParentRepository();
     this.upload = new UploadFile();
     this.req = req;
+    this.babyRequest = new BabyRequest();
+    this.stuntingRequest = new StuntingRequest();
+    this.user = this.req.user.data;
   }
 
   /**
@@ -20,23 +25,35 @@ class BabyUseCase extends BaseUseCase {
    */
   async create() {
     try {
+      const { body } = this.req;
+      body.photo = this.req.file.originalname;
+      const validate = await this.babyRequest.rules(body);
+
+      if (validate.fails()) {
+        return this.returnErrValidation(validate.errors.errors);
+      }
+
       const {
-        parent_id,
-        name,
-        birth_date,
+        parent_id, name, birth_date, height, weight, arm_circumference,
       } = this.req.body;
-      const photo = this.req.file ? `${awsConfig.aws.S3_URL}/${this.req.file.originalname}` : null;
+      const photo = this.req.file
+        ? `${awsConfig.aws.S3_URL}/${this.req.file.originalname}`
+        : null;
       const checkParent = await this.parentRepository.getOne({
         id: parent_id,
       });
 
-      if (checkParent == null) return this.returnErrWithCustomMessage(`${Message.Common.notFound}`);
+      if (checkParent == null) return this.returnErrWithCustomMessage('Parent not found');
 
       const result = await this.babyRepository.create({
         parent_id,
         name,
         birth_date,
         photo,
+        height,
+        weight,
+        arm_circumference,
+        created_by: this.user.id,
       });
 
       if (result) {
@@ -55,13 +72,21 @@ class BabyUseCase extends BaseUseCase {
    */
   async update() {
     try {
+      const { body } = this.req;
+      const photo = this.req.file
+        ? `${awsConfig.aws.S3_URL}/${this.req.file.originalname}`
+        : null;
+      body.photo = photo;
+      const validate = await this.babyRequest.rules(body, true);
+
+      if (validate.fails()) {
+        return this.returnErrValidation(validate.errors.errors);
+      }
+
       const {
-        parent_id,
-        name,
-        birth_date,
+        parent_id, name, birth_date, height, weight, arm_circumference,
       } = this.req.body;
       const { id } = this.req.params;
-      const photo = this.req.file ? `${awsConfig.aws.S3_URL}/${this.req.file.originalname}` : null;
       const checkParent = await this.parentRepository.getOne({
         id: parent_id,
       });
@@ -75,16 +100,29 @@ class BabyUseCase extends BaseUseCase {
         return this.returnNotFound();
       }
 
-      const result = await this.babyRepository.update({
-        id,
-      }, {
-        parent_id,
-        name,
-        birth_date,
-        photo,
-      });
+      let newPhoto;
+      if (this.req.file != null) {
+        newPhoto = photo;
+      } else {
+        newPhoto = baby.photo;
+      }
+      const result = await this.babyRepository.update(
+        {
+          id,
+        },
+        {
+          parent_id,
+          name,
+          birth_date,
+          newPhoto,
+          height,
+          weight,
+          arm_circumference,
+          updated_by: this.user.id,
+        },
+      );
 
-      if (result) {
+      if (result && this.req.file != null) {
         await this.upload.uploadFileToS3V3(this.req.file);
       }
 
@@ -92,7 +130,46 @@ class BabyUseCase extends BaseUseCase {
         parent_id,
         name,
         birth_date,
-        photo,
+        newPhoto,
+      });
+    } catch (err) {
+      return this.returnErrOnCatch(err);
+    }
+  }
+
+  /**
+   * update baby is stunting or not
+   * @returns {Promise<Response>}
+   */
+  async isStunting() {
+    try {
+      const validate = await this.stuntingRequest.rules(this.req.body);
+
+      if (validate.fails()) {
+        return this.returnErrValidation(validate.errors.errors);
+      }
+
+      const { baby_id, is_stunting } = this.req.body;
+      const baby = await this.babyRepository.getOne({
+        id: baby_id,
+      });
+
+      if (baby == null) {
+        return this.returnNotFoundWithCustomMessage('Baby not found');
+      }
+
+      await this.babyRepository.update(
+        {
+          id: baby_id,
+        },
+        {
+          is_stunting,
+          updated_by: this.user.id,
+        },
+      );
+
+      return this.returnOk({
+        is_stunting,
       });
     } catch (err) {
       return this.returnErrOnCatch(err);

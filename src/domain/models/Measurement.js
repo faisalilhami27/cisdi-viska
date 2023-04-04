@@ -1,6 +1,4 @@
-const {
-  Model,
-} = require('sequelize');
+const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   class Measurement extends Model {
@@ -16,44 +14,47 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
   }
-  Measurement.init({
-    id: {
-      type: DataTypes.BIGINT,
-      primaryKey: true,
-      autoIncrement: true,
-      allowNull: false,
+  Measurement.init(
+    {
+      id: {
+        type: DataTypes.BIGINT,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false,
+      },
+      baby_id: DataTypes.STRING,
+      last_weight: DataTypes.FLOAT,
+      last_height: DataTypes.INTEGER,
+      last_arm_circumference: DataTypes.FLOAT,
+      date: DataTypes.DATEONLY,
+      created_by: DataTypes.BIGINT,
+      updated_by: DataTypes.BIGINT,
+      created_at: {
+        type: DataTypes.DATE,
+        name: 'createdAt',
+        field: 'created_at',
+      },
+      updated_at: {
+        type: DataTypes.DATE,
+        name: 'updatedAt',
+        field: 'updated_at',
+      },
+      deleted_at: {
+        type: DataTypes.DATE,
+        name: 'deletedAt',
+        field: 'deleted_at',
+      },
     },
-    baby_id: DataTypes.STRING,
-    is_stanting: DataTypes.BOOLEAN,
-    body_weight: DataTypes.FLOAT,
-    date: DataTypes.DATEONLY,
-    arm_circumference: DataTypes.FLOAT,
-    created_by: DataTypes.BIGINT,
-    updated_by: DataTypes.BIGINT,
-    created_at: {
-      type: DataTypes.DATE,
-      name: 'createdAt',
-      field: 'created_at',
+    {
+      sequelize,
+      modelName: 'Measurement',
+      tableName: 'measurements',
+      paranoid: true,
+      timestamps: true,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
+      deletedAt: 'deleted_at',
     },
-    updated_at: {
-      type: DataTypes.DATE,
-      name: 'updatedAt',
-      field: 'updated_at',
-    },
-    deleted_at: {
-      type: DataTypes.DATE,
-      name: 'deletedAt',
-      field: 'deleted_at',
-    },
-  }, {
-    sequelize,
-    modelName: 'Measurement',
-    tableName: 'measurements',
-    paranoid: true,
-    timestamps: true,
-    createdAt: 'created_at',
-    updatedAt: 'updated_at',
-    deletedAt: 'deleted_at',
-  });
+  );
   return Measurement;
 };

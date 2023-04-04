@@ -29,9 +29,12 @@ class BabyRepository extends BaseRepository {
   async update(params, data) {
     try {
       console.log(data);
-      return await this.updateData({
-        where: params,
-      }, data);
+      return await this.updateData(
+        {
+          where: params,
+        },
+        data,
+      );
     } catch (error) {
       this.logError(error);
       return error;

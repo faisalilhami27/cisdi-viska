@@ -26,6 +26,36 @@ module.exports = {
       photo: {
         type: Sequelize.STRING(255),
       },
+      is_stunting: {
+        type: Sequelize.BOOLEAN,
+      },
+      weight: {
+        type: Sequelize.FLOAT,
+      },
+      height: {
+        type: Sequelize.INTEGER,
+      },
+      arm_circumference: {
+        type: Sequelize.FLOAT,
+      },
+      created_by: {
+        type: Sequelize.BIGINT,
+        references: {
+          model: 'users',
+          key: 'id',
+          onUpdate: 'cascade',
+          onDelete: 'cascade',
+        },
+      },
+      updated_by: {
+        type: Sequelize.BIGINT,
+        references: {
+          model: 'users',
+          key: 'id',
+          onUpdate: 'cascade',
+          onDelete: 'cascade',
+        },
+      },
       created_at: {
         allowNull: true,
         type: Sequelize.DATE,

@@ -5,8 +5,7 @@ module.exports = {
     es2021: true,
   },
   extends: 'airbnb-base',
-  overrides: [
-  ],
+  overrides: [],
   parserOptions: {
     ecmaVersion: 'latest',
   },
@@ -24,6 +23,7 @@ module.exports = {
     'no-plusplus': 'off',
     'no-promise-executor-return': 'off',
     'no-return-await': 'off',
-    'camelcase': 'off',
+    camelcase: 'off',
+    'no-loop-func': 'off',
   },
 };

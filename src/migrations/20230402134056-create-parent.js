@@ -17,6 +17,24 @@ module.exports = {
       address: {
         type: Sequelize.TEXT,
       },
+      created_by: {
+        type: Sequelize.BIGINT,
+        references: {
+          model: 'users',
+          key: 'id',
+          onUpdate: 'cascade',
+          onDelete: 'cascade',
+        },
+      },
+      updated_by: {
+        type: Sequelize.BIGINT,
+        references: {
+          model: 'users',
+          key: 'id',
+          onUpdate: 'cascade',
+          onDelete: 'cascade',
+        },
+      },
       created_at: {
         allowNull: true,
         type: Sequelize.DATE,

@@ -22,7 +22,7 @@ class Axios {
   }
 
   /**
-   * set request for http client
+   * set requests for http client
    * @param request
    */
   setRequest(request) {
@@ -30,7 +30,7 @@ class Axios {
   }
 
   /**
-   * get request for http client
+   * get requests for http client
    * @returns {null}
    */
   getRequest() {

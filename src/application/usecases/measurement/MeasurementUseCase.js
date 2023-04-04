@@ -1,6 +1,8 @@
+const moment = require('moment');
 const MeasurementRepository = require('../../repositories/measurement/MeasurementRepository');
 const BabyRepository = require('../../repositories/baby/BabyRepository');
 const BaseUseCase = require('../BaseUseCase');
+const MeasurementRequest = require('../../../interface/requests/measurement/MeasurementRequest');
 const Message = require('../../../constant/message');
 
 class MeasurementUseCase extends BaseUseCase {
@@ -8,7 +10,9 @@ class MeasurementUseCase extends BaseUseCase {
     super();
     this.measurementRepository = new MeasurementRepository();
     this.babyRepository = new BabyRepository();
+    this.measurementRequest = new MeasurementRequest();
     this.req = req;
+    this.user = this.req.user.data;
   }
 
   /**
@@ -17,100 +21,42 @@ class MeasurementUseCase extends BaseUseCase {
    */
   async create() {
     try {
+      const validate = await this.measurementRequest.rules(this.req.body);
+
+      if (validate.fails()) {
+        return this.returnErrValidation(validate.errors.errors);
+      }
+
       const {
-        baby_id,
-        is_stanting,
-        body_weight,
-        arm_circumference,
-      } = this.req.body;
-      const userId = this.req.user.data.id;
+ baby_id, height, weight, arm_circumference,
+} = this.req.body;
+      const userId = this.user.id;
       const checkBaby = await this.babyRepository.getOne({
         id: baby_id,
       });
 
       if (checkBaby == null) return this.returnErrWithCustomMessage(`${Message.Common.notFound}`);
+
+      if (checkBaby.is_stunting === 0) return this.returnErrWithCustomMessage('Baby must be stunting status');
 
       const result = await this.measurementRepository.create({
         baby_id,
-        is_stanting,
-        body_weight,
-        arm_circumference,
+        last_height: height,
+        last_weight: weight,
+        last_arm_circumference: arm_circumference,
         created_by: userId,
+        date: moment().format('YYYY-MM-DD'),
       });
+
+      await this.babyRepository.update(
+        { id: baby_id },
+        {
+          height,
+          weight,
+          arm_circumference,
+        },
+      );
       return this.returnCreated(result);
-    } catch (err) {
-      return this.returnErrOnCatch(err);
-    }
-  }
-
-  /**
-   * update parent
-   * @returns {Promise<Response>}
-   */
-  async update() {
-    try {
-      const {
-        baby_id,
-        is_stanting,
-        body_weight,
-        arm_circumference,
-      } = this.req.body;
-      const { id } = this.req.params;
-      const userId = this.req.user.data.id;
-      const checkBaby = await this.babyRepository.getOne({
-        id: baby_id,
-      });
-
-      if (checkBaby == null) return this.returnErrWithCustomMessage(`${Message.Common.notFound}`);
-
-      const result = await this.measurementRepository.getOne({
-        id,
-      });
-
-      if (result == null) {
-        return this.returnNotFound();
-      }
-
-      await this.measurementRepository.update({
-        id,
-      }, {
-        baby_id,
-        is_stanting,
-        body_weight,
-        arm_circumference,
-        updated_by: userId,
-      });
-      return this.returnOk({
-        baby_id,
-        is_stanting,
-        body_weight,
-        arm_circumference,
-        updated_by: userId,
-      });
-    } catch (err) {
-      return this.returnErrOnCatch(err);
-    }
-  }
-
-  /**
-   * delete parent
-   * @returns {Promise<Response>}
-   */
-  async delete() {
-    try {
-      const { id } = this.req.params;
-      const result = await this.measurementRepository.getOne({
-        id,
-      });
-
-      if (result == null) {
-        return this.returnNotFound();
-      }
-
-      await this.measurementRepository.delete({
-        id,
-      });
-      return this.returnOk();
     } catch (err) {
       return this.returnErrOnCatch(err);
     }
@@ -133,11 +79,11 @@ class MeasurementUseCase extends BaseUseCase {
    * get one parent
    * @returns {Promise<Response>}
    */
-  async getOneMeasurement() {
+  async getMeasurementByBaby() {
     try {
-      const { id } = this.req.params;
+      const { baby_id } = this.req.params;
       const result = await this.measurementRepository.getOne({
-        id,
+        baby_id,
       });
 
       if (result == null) {

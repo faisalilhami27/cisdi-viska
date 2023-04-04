@@ -9,26 +9,14 @@ class MeasurementController extends BaseController {
     return res.status(statusCode.code).json(result);
   }
 
-  async update(req, res) {
-    const result = await new MeasurementUseCase(req).update();
-    const statusCode = new StatusCode(result);
-    return res.status(statusCode.code).json(result);
-  }
-
-  async delete(req, res) {
-    const result = await new MeasurementUseCase(req).delete();
-    const statusCode = new StatusCode(result);
-    return res.status(statusCode.code).json(result);
-  }
-
   async getAll(req, res) {
     const result = await new MeasurementUseCase(req).getAllMeasurement();
     const statusCode = new StatusCode(result);
     return res.status(statusCode.code).json(result);
   }
 
-  async getOne(req, res) {
-    const result = await new MeasurementUseCase(req).getOneMeasurement();
+  async getMeasurementByBaby(req, res) {
+    const result = await new MeasurementUseCase(req).getMeasurementByBaby();
     const statusCode = new StatusCode(result);
     return res.status(statusCode.code).json(result);
   }
